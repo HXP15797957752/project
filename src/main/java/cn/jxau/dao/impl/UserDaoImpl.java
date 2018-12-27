@@ -2,40 +2,60 @@ package cn.jxau.dao.impl;
 
 import java.sql.ResultSet;
 
+import cn.jxau.core.dao.BaseDaoImpl;
+import cn.jxau.core.dao.BaseQueryModel;
 import cn.jxau.dao.UserDao;
-import cn.jxau.util.base.BaseDaoImpl;
-import cn.jxau.util.base.BaseQueryModel;
-/**
- * 
- * @author hxp
- * 2018年11月29日 上午8:43:11
- */
+import cn.jxau.entity.User;
+import cn.jxau.entity.UserQueryModel;
+
+
 public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
-    @Override
-    public String getInsertSql(Object data) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getSelectAllSql() {		
+		return "select * from t_user ";
+	}
 
-    @Override
-    public String getFindAllSql() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getSelectSql(BaseQueryModel queryModel) {
+		UserQueryModel qm = (UserQueryModel)queryModel;
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from t_user where 1=1 ");
+		if(qm.getName()!=null && qm.getName().trim().length()>0){
+			sb.append(" and name='"+qm.getName()+"' ");
+		}
+		if(qm.getPwd()!=null && qm.getPwd().trim().length()>0){
+			sb.append(" and pwd='"+qm.getPwd()+"' ");
+		}
+		return sb.toString();
+	}
 
-    @Override
-    public String getFindConditionSql(BaseQueryModel queryModel) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getInsertSql(Object data) {	
+		User user = (User)data;
+		return "insert into t_user(name,pwd,online) values('"+user.getName()+"','"+user.getPwd()+"',1)";
+	}
 
-    @Override
-    public Object rsToObject(ResultSet rs) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getUpdateSql(Object data) {
+		User user = (User)data;
+		return "update t_user set name='"+user.getName()+"',pwd='"+user.getPwd()+"',online="+user.getOnline()+" where id="+user.getId();
+	}
 
-   
+	@Override
+	public String getDeleteSql(int id) {		
+		return "delete from t_user where id="+id;
+	}
+
+	@Override
+	public Object rsToModel(ResultSet rs) throws Exception {
+		User user = new User();
+		user.setId(rs.getInt("id"));
+		user.setName(rs.getString("name"));
+		user.setPwd(rs.getString("pwd"));
+		user.setOnline(rs.getInt("online"));
+		
+		return user;
+	}
 
 }
